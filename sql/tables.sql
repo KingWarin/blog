@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
       `userAlias` varchar(250) NOT NULL,
       `userMail` varchar(250) NOT NULL,
       `userPass` varchar(250) NOT NULL,
+      `salt` varchar(128) NOT NULL,
       PRIMARY KEY (`userId`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
