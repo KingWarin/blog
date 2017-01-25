@@ -1,6 +1,6 @@
 <?php
-    if(isset($_POST['mail'], $_POST['pass']) {
-        include_once dbconnect.php
+    if(isset($_POST['mail'], $_POST['pass'])) {
+        include_once dbconnect.php;
         $stmt = $con->prepare("SELECT userAlias, userPass, salt FROM users WHERE userMail=:mail AND status='active'");
         $stmt->bindParam(':mail', $mail);
 
