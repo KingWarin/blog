@@ -48,6 +48,7 @@
         if(isset($_SESSION['userid'], $_SESSION['username'], $_SESSION['agent'])) {
             if(isset($_GET['logout'])) {
                 logout();
+                return false;
             }
             if( hash('sha512', $_SERVER['HTTP_USER_AGENT'].$_SESSION['userid']) == $_SESSION['agent']) {
                 return true;
