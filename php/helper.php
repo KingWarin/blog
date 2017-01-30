@@ -2,14 +2,10 @@
     include_once 'dbconnect.php';
 
     function login($mail, $pass) {
-        global $con;
-        $stmt = $con->prepare("SELECT userId, userAlias, userPass, salt FROM users WHERE userMail=:mail AND status='active'");
-        $stmt->bindParam(':mail', $mail);
+        $connection = new Connection();
+        $result = $connection->getActiveUserByMail($mail);
 
         $pass = hash('sha256', $pass); // TODO: Just for testing, this line has to be removed when frontend is created.
-
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $dbpass = $result['userPass'];
         $salt = $result['salt'];
