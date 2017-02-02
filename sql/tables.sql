@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
       `createDate` date NOT NULL,
       `commentorName` varchar(150) NOT NULL,
       `commentorMail` varchar(250) NOT NULL,
-      ` commentorPage` varchar(250) DEFAULT NULL,
+      `commentorPage` varchar(250) DEFAULT NULL,
       `comment` text NOT NULL,
       PRIMARY KEY (`commentId`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
