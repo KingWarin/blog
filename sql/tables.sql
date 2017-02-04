@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `comments` (
       `commentId` int(11) NOT NULL AUTO_INCREMENT,
-      `createDate` date NOT NULL,
+      `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `commentorName` varchar(150) NOT NULL,
       `commentorMail` varchar(250) NOT NULL,
       `commentorPage` varchar(250) DEFAULT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `articles` (
       `articleId` int(11) NOT NULL AUTO_INCREMENT,
       `status` varchar(15) NOT NULL,
-      `createDate` date NOT NULL,
+      `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `userId` int(11) NOT NULL,
       PRIMARY KEY (`articleId`),
       KEY `userId` (`userId`),
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `content` (
       `contentId` int(11) NOT NULL AUTO_INCREMENT,
       `articleId` int(11) NOT NULL,
       `languageId` int(11) NOT NULL,
-      `createDate` date NOT NULL,
+      `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `heading` varchar(500) NOT NULL,
       `content` text NOT NULL,
       PRIMARY KEY (`contentId`),
