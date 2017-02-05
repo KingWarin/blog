@@ -8,6 +8,10 @@
 
         private $con;
 
+        private function now() {
+            return date('Y-m-d H:i:s', time());
+        }
+
         public function getActiveUserByMail($mail) {
             $select = $this->con->prepare("SELECT userId, userAlias, userPass, salt FROM users WHERE userMail=:mail AND status='active'");
             $select->bindParam(':mail', $mail);
@@ -33,6 +37,13 @@
             return $res;
         }
 
+        public function getLanguages() {
+            $select = $this->con->prepare("SELECT languageId, language FROM languages");
+            $select->execute();
+            $langs = $select->fetchAll();
+            return $langs;
+        }
+
         public function addUser($alias, $mail, $pass, $salt) {
             $insert = $this->con->prepare(
                 "INSERT INTO users (userAlias, userMail, userPass, status, salt) VALUES (:user, :userMail, :userPass, 'active', :userSalt)"
@@ -47,7 +58,7 @@
         }
 
         public function addComment($commentor, $mail, $page, $comment) {
-            $date = date('Y-m-d H:i:s', time());
+            $date = $this->now();
             $insert = $this->con->prepare(
                 "INSERT INTO comments (createDate, commentorName, commentorMail, commentorPage, comment) VALUES (:date, :name, :mail, :page, :comment)"
             );
@@ -57,8 +68,7 @@
             $insert->bindParam(':mail', $mail);
             $insert->bindParam(':page', $page);
             $insert->bindParam(':comment', $comment);
-            $res = $insert->execute();
-            if($res) {
+            if($insert->execute()) {
                 // successful, so fetch the new comments id
                 $insert->closeCursor();
                 $select->bindParam(':date', $date);
@@ -68,7 +78,7 @@
                 }
             }
             // failure
-            return $res;
+            return false;
         }
 
         public function linkCommentToArticle($articleId, $commentId) {
@@ -78,6 +88,44 @@
             $insert->bindParam(':articleId', $articleId);
             $insert->bindParam(':commentId', $commentId);
             if($insert->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public function createArticle($heading, $status) {
+            $createDate = $this->now();
+            $insert = $this->con->prepare(
+                "INSERT INTO articles (heading, status, createDate, userId) VALUES (:title, :status, :date, :user)"
+            );
+            $select = $this->con->prepare("SELECT articleId FROM articles WHERE createDate=:date");
+            $insert->bindParam(':title', $heading);
+            $insert->bindParam(':status', $status);
+            $insert->bindParam(':date', $createDate);
+            $insert->bindParam(':user', $_SESSION['userid']);
+            if($insert->execute()){
+                $insert->closeCursor();
+                $select->bindParam(':date', $createDate);
+                if($select->execute()) {
+                    $row = $select->fetch(PDO::FETCH_ASSOC);
+                    return $row['articleId'];
+                }
+            }
+            return false;
+        }
+
+        public function createContentForArticle($articleId, $heading, $content, $languageId) {
+            $date = $this->now();
+            $insert = $this->con->prepare(
+                "INSERT INTO content (articleId, createDate, heading, content, languageId) VALUES (:aId, :date, :heading, :content, :lId)"
+            );
+            $insert->bindParam(':aId', $articleId);
+            $insert->bindParam(':date' ,$date);
+            $insert->bindParam(':heading', $heading);
+            $insert->bindParam(':content', $content);
+            $insert->bindParam(':lId', $languageId);
+            if($insert->execute()){
                 return true;
             } else {
                 return false;
