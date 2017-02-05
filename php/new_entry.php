@@ -16,10 +16,27 @@
         </div>
         <div>
             <form action="create_entry.php" method="post">
-                <label for="heading">Heading:</label>
-                <input type="text" name="heading" />
-                <br />
-                <input type="submit" value="Create and add content">
+                <label for="articleHeading">Heading:</label>
+                <input type="text" name="articleHeading" />
+                <hr />
+                <label for="contentHeading">Language dependent heading:</label>
+                <input type="text" name="contentHeading" />
+                <label for="language">Language:</label>
+                <select name="language">
+                    <?php
+                        $connection = new Connection();
+                        $langs = $connection->getLanguages();
+                        foreach($langs as $lang) {
+                            echo '<option value="'.$lang['languageId'].'">'.$lang['language'].'</option>';
+                        }
+                    ?>
+                </select>
+                <label for="content">Content:</label>
+                <textarea name="content"></textarea>
+                <label for="moreContent">Add content for other language</label>
+                <input type="checkbox" name="moreContent" />
+                <hr />
+                <input type="submit" value="Create" />
                 <a  href="admin.php">Dismiss changes</a>
             </form>
         </div>
