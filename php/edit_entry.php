@@ -4,7 +4,7 @@
     secure_session();
     if(!check_login()) {
         header('Location: ../login.html');
-    } else if(isset($_GET['aid']) {
+    } else if(isset($_GET['aid'])) {
         $articleId = $_GET['aid'];
     } else {
         header('Location: admin.php');
