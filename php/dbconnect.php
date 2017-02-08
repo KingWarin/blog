@@ -29,19 +29,20 @@
             return $res;
         }
 
-        public function addLanguage($lang, $icon) {
-            $insert = $this->con->prepare("INSERT INTO languages (language, langIcon) VALUES (:lang, :icon)");
-            $insert->bindParam(':lang', $lang);
-            $insert->bindParam(':icon', $icon);
-            $res = $insert->execute();
-            return $res;
-        }
-
-        public function getLanguages() {
-            $select = $this->con->prepare("SELECT languageId, language FROM languages");
-            $select->execute();
-            $langs = $select->fetchAll();
-            return $langs;
+        public function addLanguage($lang, $langIcon) {
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    languages
+                    (language, icon)
+                VALUES
+                    (:language, :languageIcon)
+            ");
+            $insert->bindParam(':language', $lang);
+            $insert->bindParam(':languageIcon', $langIcon);
+            if($insert->execute()) {
+                return true;
+            }
+            return false;
         }
 
         public function addUser($alias, $mail, $pass, $salt) {
@@ -115,21 +116,152 @@
             return false;
         }
 
-        public function createContentForArticle($articleId, $heading, $content, $languageId) {
+        public function createContentForArticle($articleId, $contents) {
             $date = $this->now();
             $insert = $this->con->prepare(
                 "INSERT INTO content (articleId, createDate, heading, content, languageId) VALUES (:aId, :date, :heading, :content, :lId)"
             );
-            $insert->bindParam(':aId', $articleId);
-            $insert->bindParam(':date' ,$date);
-            $insert->bindParam(':heading', $heading);
-            $insert->bindParam(':content', $content);
-            $insert->bindParam(':lId', $languageId);
-            if($insert->execute()){
-                return true;
-            } else {
-                return false;
+            $errors = array();
+            foreach($contents as $content) {
+                $insert->bindParam(':aId', $articleId);
+                $insert->bindParam(':date', $date);
+                $insert->bindParam(':heading', $content['contentHeading']);
+                $insert->bindParam(':content', $content['content']);
+                $insert->bindParam(':lId', $content['languageId']);
+                if(!$insert->execute()) {
+                    $errors[] = "Unable to create content with heading: ".content['contentHeading'];
+                }
+                $insert->closeCursor();
             }
+            return $errors;
+        }
+
+        public function getEntry($articleId) {
+            $selectArticle = $this->con->prepare("SELECT articleId, status, heading FROM articles WHERE articleId=:aid");
+            $selectContent = $this->con->prepare(
+                "SELECT 
+                    c.contentId, c.heading, c.content, l.languageId, l.language, l.icon
+                 FROM
+                    content as c
+                 JOIN
+                    languages as l
+                 ON
+                    c.languageId=l.languageId
+                 WHERE
+                    c.articleId=:aid"
+            );
+            $selectArticle->bindParam(':aid', $articleId);
+            $selectContent->bindParam(':aid', $articleId);
+            if($selectArticle->execute()) {
+                $article = $selectArticle->fetch(PDO::FETCH_ASSOC);
+                $selectArticle->closeCursor();
+                if($selectContent->execute()) {
+                    $content = $selectContent->fetchAll();
+                    $article['content'] = $content;
+                    return $article;
+                }
+                // For now just fallback to returning false...
+            }
+            // ... in the future return sth. like a status code so we can display what didn't work out
+            return false;
+        }
+
+        public function getLanguages() {
+            $select = $this->con->prepare("
+                SELECT
+                    languageId, language, icon
+                FROM
+                    languages
+            ");
+            if($select->execute()) {
+                $langs = $select->fetchAll();
+                return $langs;
+            }
+            // Again, add some error handling stuff
+            return false;
+        }
+
+        public function getRemainingLanguagesForArticle($articleId) {
+            $select = $this->con->prepare("
+                SELECT
+                    l.languageId, l.language, l.icon
+                FROM
+                    languages as l
+                WHERE
+                    l.languageId
+                NOT IN
+                    ( SELECT
+                        c.languageId
+                      FROM
+                        content as c
+                      WHERE
+                        c.articleId=:aId
+                    )
+            ");
+            $select->bindParam(':aId', $articleId);
+            if($select->execute()) {
+                $langs = $select->fetchAll();
+                return $langs;
+            }
+            return false;
+        }
+
+        public function getArticles() {
+            $select = $this->con->prepare("
+                SELECT
+                    articleId, status, createDate, userId, heading
+                FROM
+                    articles
+            ");
+            if($select->execute()) {
+                $articles = $select->fetchAll();
+                return $articles;
+            }
+            return false;
+        }
+
+        public function updateArticle($articleId, $contents) {
+            $date = $this->now();
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    content (articleId, createDate, heading, content, languageId)
+                VALUES
+                    (:aId, :date, :heading, :content, :lId)
+            ");
+            $updateContent = $this->con->prepare("
+                UPDATE
+                    content
+                SET
+                    heading=:heading,
+                    content=:content
+                WHERE
+                    contentId=:contentId
+            ");
+            $errors = array();
+            foreach($contents as $content) {
+                if(!isset($content['save'])) {
+                    continue;
+                } else if($content['save'] == 'update') {
+                    $updateContent->bindParam(':heading', $content['contentHeading']);
+                    $updateContent->bindParam(':content', $content['content']);
+                    $updateContent->bindParam(':contentId', $content['contentId']);
+                    if(!$updateContent->execute()) {
+                        $errors[] = "Can't update content with id/heading: ".$content['contentId']."/".$content['contentHeading'];
+                    }
+                    $updateContent->closeCursor();
+                } else if($content['save'] == 'on') {
+                    $insert->bindParam(':aId', $articleId);
+                    $insert->bindParam(':date', $date);
+                    $insert->bindParam(':heading', $content['contentHeading']);
+                    $insert->bindParam(':content', $content['content']);
+                    $insert->bindParam(':lId', $content['languageId']);
+                    if(!$insert->execute()) {
+                        $errors[] = "Unable to create content with heading: ".$content['contentHeading'];
+                    }
+                    $insert->closeCursor();
+                }
+            }
+            return $errors;
         }
     }
 ?>
