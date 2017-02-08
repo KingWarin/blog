@@ -5,7 +5,7 @@
     if(!check_login()) {
         header('Location: ../login.html');
     } else {
-        if(isset($_POST['articleHeading'], $_POST['contentHeading'], $_POST['language'], $_POST['content'])) {
+        if(isset($_POST['articleHeading'], $_POST['lang'])) {
             $status = 'draft';
             if(isset($_POST['publish'])) {
                 $status = 'published';
@@ -16,18 +16,25 @@
                 //an error occured, do some error handling
                 echo "Unable to create article";
             } else {
-                $content = $connection->createContentForArticle($article, $_POST['contentHeading'], $_POST['content'], $_POST['language']);
-                if(!$content) {
-                    // an error occured, do some error handling
-                    echo "Unable to create content";
-                } else {
-                    if(isset($_POST['moreContent'])) {
-                        // redirect to addContent-form, for now print sth
-                        echo "Successful created mew article, now creating more content";
-                    } else {
-                        // redirect somewhere, for now print sth
-                        echo "Successful created new article";
+                $languages = $_POST['lang'];
+                $allContent = array();
+                while($lang = each($languages)) {
+                    $content = $lang['value'];
+                    if(!isset($content['save'])) {
+                        continue;
                     }
+                    $content['languageId'] = $lang['key'];
+                    $content['articleId'] = $article;
+                    $allContent[] = $content;
+                }
+                $content = $connection->createContentForArticle($article, $allContent);
+                if(count($content) > 0) {
+                    echo "Errors occured.<br />";
+                    foreach($content as $error) {
+                        echo $error."<br />";
+                    }
+                } else {
+                    header('Location: admin.php');
                 }
             }
         } else {
