@@ -7,6 +7,7 @@
     }
     $connection = new Connection();
     $langs = $connection->getLanguages();
+    $categories = $connection->getCategories();
 ?>
 <html>
     <head>
@@ -35,8 +36,21 @@
                     <hr />
                 <?php
                     }
+                    if(count($categories) > 0) {
+                        echo "<div><h1>Categories</h1>";
+                    }
+                    foreach($categories as $category) {
                 ?>
-                <hr />
+                    <div class="category-line<?php echo ($category['parentId'] != NULL ? " child-category" : '') ?>">
+                    <label for="category[<?php echo $category['categoryId'] ?>]"><?php echo $category['categoryName'] ?></label>
+                    <input type="checkbox" name="category[<?php echo $category['categoryId'] ?>]" />
+                    </div>
+                <?php
+                    }
+                    if(count($categories) > 0) {
+                        echo "</div><hr />";
+                    }
+                ?>
                 <input type="submit" value="Create" />
                 <a  href="admin.php">Dismiss changes</a>
             </form>

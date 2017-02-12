@@ -16,6 +16,13 @@
                 //an error occured, do some error handling
                 echo "Unable to create article";
             } else {
+                if(isset($_POST['category'])) {
+                    $categories = array();
+                    while($category = each($_POST['category'])) {
+                        $categories[] = $category['key'];
+                    }
+                    $categoryLinks = $connection->linkCategoriesToArticle($categories, $article);
+                }
                 $languages = $_POST['lang'];
                 $allContent = array();
                 while($lang = each($languages)) {
