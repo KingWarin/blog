@@ -13,6 +13,7 @@
     $connection = new Connection();
     $entry = $connection->getEntry($articleId);
     $languages = $connection->getRemainingLanguagesForArticle($articleId);
+    $categories = $connection->getCategories();
 ?>
 <html>
     <head>
@@ -56,6 +57,20 @@
                             <hr />
                 <?php
                         }
+                    }
+                    if(count($categories) > 0) {
+                        echo "<div><h1>Categories</h1>";
+                    }
+                    foreach($categories as $category) {
+                ?>
+                    <div class="category-line<?php echo ($category['parentId'] != NULL ? " child-category" : '') ?>">
+                    <label for="category[<?php echo $category['categoryId'] ?>]"><?php echo $category['categoryName'] ?></label>
+                    <input type="checkbox" name="category[<?php echo $category['categoryId'] ?>]" <?php echo (isset($entry['categories'][$category['categoryId']]) ? 'checked' : '') ?>/>
+                    </div>
+                <?php
+                    }
+                    if(count($categories) > 0) {
+                        echo "</div><hr />";
                     }
                 ?>
                 <input type="submit" value="Update" />

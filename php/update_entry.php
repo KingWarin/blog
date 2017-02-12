@@ -11,6 +11,12 @@
                 $status = 'published';
             }
             $articleId = $_POST['articleId'];
+            $connection = new Connection();
+            $categoriesSet = $connection->getCategoriesForArticle($articleId);
+            $categoriesOld = array();
+            while($category = each($categoriesSet)) {
+                $categoriesOld[] = $category['key'];
+            }
             $languages = $_POST['lang'];
             $allContent = array();
             while($lang = each($languages)) {
@@ -18,7 +24,18 @@
                 $content['languageId'] = $lang['key'];
                 $allContent[] = $content;
             }
-            $connection = new Connection();
+            $delCategories = $categoriesOld;
+            if(isset($_POST['category'])) {
+                $categories = array();
+                while($category = each($_POST['category'])) {
+                    $categories[] = $category['key'];
+                }
+                $delCategories = array_diff($categoriesOld, $categories);
+                $categoryLinks = $connection->linkCategoriesToArticle($categories, $articleId);
+            }
+            if(count($delCategories) > 0) {
+                $updatedCategories = $connection->unlinkCategoriesForArticle($delCategories, $articleId);
+            }
             $result = $connection->updateArticle($articleId, $allContent);
             if(count($result) > 0) {
                 echo "Can't update entry.<br />";
