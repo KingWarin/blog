@@ -158,6 +158,9 @@
                 if($selectContent->execute()) {
                     $content = $selectContent->fetchAll();
                     $article['content'] = $content;
+                    $selectContent->closeCursor();
+                    $categories = $this->getCategoriesForArticle($articleId);
+                    $article['categories'] = $categories;
                     return $article;
                 }
                 // For now just fallback to returning false...
@@ -218,6 +221,88 @@
                 return $articles;
             }
             return false;
+        }
+
+        public function getCategories() {
+            $select = $this->con->prepare("
+                SELECT
+                    categoryId, categoryName, parentId
+                FROM
+                    categories
+            ");
+            if($select->execute()){
+                $categories = $select->fetchAll();
+                return $categories;
+            }
+            return false;
+        }
+
+        public function getCategoriesForArticle($articleId) {
+            $select = $this->con->prepare("
+                SELECT
+                    c.categoryId, c.categoryName
+                FROM
+                    categories c
+                JOIN
+                    articlecategories a
+                ON
+                    c.categoryId = a.categoryId
+                WHERE
+                    a.articleId=:aId
+            ");
+            $select->bindParam(':aId', $articleId);
+            if($select->execute()){
+                $categories = $select->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
+                return $categories;
+            }
+            return false;
+        }
+
+        public function linkCategoriesToArticle($categories, $articleId) {
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    articlecategories
+                    (articleId, categoryId)
+                VALUES
+                    (:aId, :cId)
+            ");
+            $errors = array();
+            foreach($categories as $category) {
+                $insert->bindParam(':aId', $articleId);
+                $insert->bindParam(':cId', $category);
+                if(!$insert->execute()) {
+                    $errors[] = "Unable to create category-link for article with category: ".$articleId.'/'.$category;
+                }
+                $insert->closeCursor();
+            }
+            if(count($errors) > 0) {
+                return $errors;
+            }
+            return true;
+        }
+
+        public function unlinkCategoriesForArticle($categories, $articleId) {
+            $delete = $this->con->prepare("
+                DELETE FROM
+                    articlecategories
+                WHERE
+                    articleId=:aId
+                AND
+                    categoryId=:cId
+            ");
+            $errors = array();
+            foreach($categories as $category) {
+                $delete->bindParam(':aId', $articleId);
+                $delete->bindParam(':cId', $category);
+                if(!$delete->execute()) {
+                    $errors[] = 'Unable to unlink category for article: '.$category.'/'.$articleId;
+                }
+                $delete->closeCursor();
+            }
+            if(count($errors) > 0) {
+                return $errors;
+            }
+            return true;
         }
 
         public function updateArticle($articleId, $contents) {
