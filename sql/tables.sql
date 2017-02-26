@@ -1,3 +1,5 @@
+USE blog;
+
 CREATE TABLE IF NOT EXISTS `comments` (
       `commentId` int(11) NOT NULL AUTO_INCREMENT,
       `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -20,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `users` (
       `userAlias` varchar(250) NOT NULL,
       `userMail` varchar(250) NOT NULL,
       `userPass` varchar(250) NOT NULL,
+      `status` varchar(10) NOT NULL,
       `salt` varchar(128) NOT NULL,
       PRIMARY KEY (`userId`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
