@@ -11,6 +11,7 @@
         echo '<br /><a href="list_entries.php">Edit an existing blog post</a>';
         echo '<br /><a href="new_category.php">Create a new category</a>';
         echo '<br /><a href="new_language.php">Add a new language</a>';
+        echo '<br /><a href="new_user.php">Add a new user</a>';
         echo '<hr />';
         echo '<a href="?logout">Logout</a>';
     }
