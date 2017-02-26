@@ -73,6 +73,9 @@
                         echo "</div><hr />";
                     }
                 ?>
+                <label for="publish">Publish:</label>
+                <input type="checkbox" name="publish" />
+                <hr />
                 <input type="submit" value="Update" />
                 <a  href="admin.php">Dismiss changes</a>
             </form>
