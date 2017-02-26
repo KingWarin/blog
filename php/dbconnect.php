@@ -21,7 +21,6 @@
         }
 
         public function createCategory($categoryName, $parentId) {
-            $parentId = NULL;
             $insert = $this->con->prepare("INSERT INTO categories (categoryName, parentId) VALUES (:category_name, :parent_id)");
             $insert->bindParam(':category_name', $categoryName);
             $insert->bindParam(':parent_id', $parentId);
@@ -49,6 +48,8 @@
             $insert = $this->con->prepare(
                 "INSERT INTO users (userAlias, userMail, userPass, status, salt) VALUES (:user, :userMail, :userPass, 'active', :userSalt)"
             );
+            $salt = hash('sha256', $salt);
+            $pass = hash('sha256', $pass);
             $userPass = hash('sha256', $pass . $salt);
             $insert->bindParam(':user', $alias);
             $insert->bindParam(':userMail', $mail);

@@ -5,6 +5,8 @@
     if(!check_login()) {
         header('Location: ../login.html');
     }
+    $connection = new Connection();
+    $categories = $connection->getCategories();
 ?>
 <html>
     <head>
@@ -20,7 +22,14 @@
                 <input type="text" name="name" />
                 <br />
                 <label for="parent">Parent category:</label>
-                <input type="text" name="parent" value="Coming soon" />
+                <select name="parent">
+                <option value="none"></option>
+                <?php
+                    foreach($categories as $category) {
+                        echo '<option value="'.$category['categoryId'].'">'.$category['categoryName'].'</option>';
+                    }
+                ?>
+                </select>
                 <br />
                 <input type="submit" value="Create category">
                 <a  href="admin.php">Dismiss changes</a>

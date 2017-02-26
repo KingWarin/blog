@@ -8,9 +8,12 @@
         if(isset($_POST['name'], $_POST['parent'])) {
             $name = $_POST['name'];
             $parent = $_POST['parent'];
+            if($parent == 'none') {
+                $parent = NULL;
+            }
             $connection = new Connection();
             $result = $connection->createCategory($name, $parent);
-            echo "Success";
+            header('Location: admin.php');
         } else {
             echo "Failure";
         }
