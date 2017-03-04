@@ -13,7 +13,16 @@
         }
 
         public function getActiveUserByMail($mail) {
-            $select = $this->con->prepare("SELECT userId, userAlias, userPass, salt FROM users WHERE userMail=:mail AND status='active'");
+            $select = $this->con->prepare("
+                SELECT
+                    userId, userAlias, userPass, salt
+                FROM
+                    users
+                WHERE
+                    userMail=:mail
+                AND
+                    status='active'
+            ");
             $select->bindParam(':mail', $mail);
             $select->execute();
             $result = $select->fetch(PDO::FETCH_ASSOC);
@@ -21,7 +30,12 @@
         }
 
         public function createCategory($categoryName, $parentId) {
-            $insert = $this->con->prepare("INSERT INTO categories (categoryName, parentId) VALUES (:category_name, :parent_id)");
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    categories (categoryName, parentId)
+                VALUES
+                    (:category_name, :parent_id)
+            ");
             $insert->bindParam(':category_name', $categoryName);
             $insert->bindParam(':parent_id', $parentId);
             $res = $insert->execute();
@@ -45,9 +59,12 @@
         }
 
         public function addUser($alias, $mail, $pass, $salt) {
-            $insert = $this->con->prepare(
-                "INSERT INTO users (userAlias, userMail, userPass, status, salt) VALUES (:user, :userMail, :userPass, 'active', :userSalt)"
-            );
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    users (userAlias, userMail, userPass, status, salt)
+                VALUES
+                    (:user, :userMail, :userPass, 'active', :userSalt)
+            ");
             $salt = hash('sha256', $salt);
             $pass = hash('sha256', $pass);
             $userPass = hash('sha256', $pass . $salt);
@@ -61,10 +78,20 @@
 
         public function addComment($commentor, $mail, $page, $comment) {
             $date = $this->now();
-            $insert = $this->con->prepare(
-                "INSERT INTO comments (createDate, commentorName, commentorMail, commentorPage, comment) VALUES (:date, :name, :mail, :page, :comment)"
-            );
-            $select = $this->con->prepare("SELECT commentId FROM comments WHERE createDate=:date");
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    comments (createDate, commentorName, commentorMail, commentorPage, comment)
+                VALUES
+                    (:date, :name, :mail, :page, :comment)
+            ");
+            $select = $this->con->prepare("
+                SELECT
+                    commentId
+                FROM
+                    comments
+                WHERE
+                    createDate=:date
+            ");
             $insert->bindParam(':date', $date);
             $insert->bindParam(':name', $commentor);
             $insert->bindParam(':mail', $mail);
@@ -84,9 +111,12 @@
         }
 
         public function linkCommentToArticle($articleId, $commentId) {
-            $insert = $this->con->prepare(
-                "INSERT INTO articlecomments (articleId, commentId) VALUES (:articleId, :commentId)"
-            );
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    articlecomments (articleId, commentId)
+                VALUES
+                    (:articleId, :commentId)
+            ");
             $insert->bindParam(':articleId', $articleId);
             $insert->bindParam(':commentId', $commentId);
             if($insert->execute()) {
@@ -98,10 +128,20 @@
 
         public function createArticle($heading, $status) {
             $createDate = $this->now();
-            $insert = $this->con->prepare(
-                "INSERT INTO articles (heading, status, createDate, userId) VALUES (:title, :status, :date, :user)"
-            );
-            $select = $this->con->prepare("SELECT articleId FROM articles WHERE createDate=:date");
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    articles (heading, status, createDate, userId)
+                VALUES
+                    (:title, :status, :date, :user)
+            ");
+            $select = $this->con->prepare("
+                SELECT
+                    articleId
+                FROM
+                    articles
+                WHERE
+                    createDate=:date
+            ");
             $insert->bindParam(':title', $heading);
             $insert->bindParam(':status', $status);
             $insert->bindParam(':date', $createDate);
@@ -119,9 +159,12 @@
 
         public function createContentForArticle($articleId, $contents) {
             $date = $this->now();
-            $insert = $this->con->prepare(
-                "INSERT INTO content (articleId, createDate, heading, content, languageId) VALUES (:aId, :date, :heading, :content, :lId)"
-            );
+            $insert = $this->con->prepare("
+                INSERT INTO
+                    content (articleId, createDate, heading, content, languageId)
+                VALUES
+                    (:aId, :date, :heading, :content, :lId)
+            ");
             $errors = array();
             foreach($contents as $content) {
                 $insert->bindParam(':aId', $articleId);
@@ -138,7 +181,14 @@
         }
 
         public function getEntry($articleId) {
-            $selectArticle = $this->con->prepare("SELECT articleId, status, heading FROM articles WHERE articleId=:aid");
+            $selectArticle = $this->con->prepare("
+                SELECT
+                    articleId, status, heading
+                FROM
+                    articles
+                WHERE
+                    articleId=:aid
+            ");
             $selectContent = $this->con->prepare(
                 "SELECT 
                     c.contentId, c.heading, c.content, l.languageId, l.language, l.icon
@@ -171,13 +221,13 @@
         }
 
         public function getLanguages() {
-            $select = $this->con->prepare("
+            $select = $this->con->query("
                 SELECT
                     languageId, language, icon
                 FROM
                     languages
             ");
-            if($select->execute()) {
+            if($select) {
                 $langs = $select->fetchAll();
                 return $langs;
             }
@@ -211,13 +261,13 @@
         }
 
         public function getArticles() {
-            $select = $this->con->prepare("
+            $select = $this->con->query("
                 SELECT
                     articleId, status, createDate, userId, heading
                 FROM
                     articles
             ");
-            if($select->execute()) {
+            if($select) {
                 $articles = $select->fetchAll();
                 return $articles;
             }
@@ -225,13 +275,13 @@
         }
 
         public function getCategories() {
-            $select = $this->con->prepare("
+            $select = $this->con->query("
                 SELECT
                     categoryId, categoryName, parentId
                 FROM
                     categories
             ");
-            if($select->execute()){
+            if($select){
                 $categories = $select->fetchAll();
                 return $categories;
             }
@@ -351,13 +401,13 @@
         }
 
         public function getSettings() {
-            $select = $this->con->prepare("
+            $select = $this->con->query("
                 SELECT
                     settingId, name, value, display
                 FROM
                     settings
             ");
-            if($select->execute()) {
+            if($select) {
                 $settings = $select->fetchAll();
                 return $settings;
             }
