@@ -6,6 +6,7 @@ install script: create an installation script
 languages: needs multi-language support for the textual identification of the language too
 categories: needs multi-language support too
 listEntries: join in userName and display it instead of the userId
+salt: rethink and improve salting
 
 Optics:
     article-creation: add checkboxes for each language and only display the language forms if checkbox is set
