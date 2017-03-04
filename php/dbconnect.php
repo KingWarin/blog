@@ -349,6 +349,39 @@
             }
             return $errors;
         }
+
+        public function getSettings() {
+            $select = $this->con->prepare("
+                SELECT
+                    settingId, name, value, display
+                FROM
+                    settings
+            ");
+            if($select->execute()) {
+                $settings = $select->fetchAll();
+                return $settings;
+            }
+        }
+
+        public function setSettings($settings) {
+            $update = $this->con->prepare("
+                INSERT INTO
+                    settings (settingId, value)
+                VALUES
+                    (:sId, :sValue)
+                ON DUPLICATE KEY UPDATE
+                    value=:sValue
+            ");
+            foreach($settings as $setting) {
+                $settingId = NULL;
+                if(isset($setting['id'])) {
+                    $settingId = $setting['id'];
+                }
+                $update->bindParam(':sId', $settingId);
+                $update->bindParam(':sValue', $setting['value']);
+                $update->execute();
+            }
+        }
     }
 ?>
 

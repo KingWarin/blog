@@ -78,3 +78,11 @@ CREATE TABLE IF NOT EXISTS `articlecategories` (
       CONSTRAINT `articlecategories_categoryid` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`categoryId`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `settings` (
+      `settingId` int(20) NOT NULL AUTO_INCREMENT,
+      `name` varchar(250) NOT NULL,
+      `value` text NOT NULL,
+      `display` varchar(250) NOT NULL,
+      PRIMARY KEY (`settingId`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

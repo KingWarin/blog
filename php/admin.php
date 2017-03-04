@@ -13,6 +13,8 @@
         echo '<br /><a href="new_language.php">Add a new language</a>';
         echo '<br /><a href="new_user.php">Add a new user</a>';
         echo '<hr />';
+        echo '<a href="settings.php">Manage settings</a>';
+        echo '<hr />';
         echo '<a href="?logout">Logout</a>';
     }
 ?>
