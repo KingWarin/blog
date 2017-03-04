@@ -84,27 +84,14 @@
                 VALUES
                     (:date, :name, :mail, :page, :comment)
             ");
-            $select = $this->con->prepare("
-                SELECT
-                    commentId
-                FROM
-                    comments
-                WHERE
-                    createDate=:date
-            ");
             $insert->bindParam(':date', $date);
             $insert->bindParam(':name', $commentor);
             $insert->bindParam(':mail', $mail);
             $insert->bindParam(':page', $page);
             $insert->bindParam(':comment', $comment);
             if($insert->execute()) {
-                // successful, so fetch the new comments id
-                $insert->closeCursor();
-                $select->bindParam(':date', $date);
-                if($select->execute()) {
-                    $row = $select->fetch(PDO::FETCH_ASSOC);
-                    return $row['commentId'];
-                }
+                // successful, so return the new comments id
+                return $this->con->lastInsertId();
             }
             // failure
             return false;
@@ -134,25 +121,12 @@
                 VALUES
                     (:title, :status, :date, :user)
             ");
-            $select = $this->con->prepare("
-                SELECT
-                    articleId
-                FROM
-                    articles
-                WHERE
-                    createDate=:date
-            ");
             $insert->bindParam(':title', $heading);
             $insert->bindParam(':status', $status);
             $insert->bindParam(':date', $createDate);
             $insert->bindParam(':user', $_SESSION['userid']);
             if($insert->execute()){
-                $insert->closeCursor();
-                $select->bindParam(':date', $createDate);
-                if($select->execute()) {
-                    $row = $select->fetch(PDO::FETCH_ASSOC);
-                    return $row['articleId'];
-                }
+                return $this->con->lastInsertId();
             }
             return false;
         }
