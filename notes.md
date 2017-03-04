@@ -7,6 +7,7 @@ languages: needs multi-language support for the textual identification of the la
 categories: needs multi-language support too
 listEntries: join in userName and display it instead of the userId
 salt: rethink and improve salting
+dbconnect: implement/add real error-handling
 
 Optics:
     article-creation: add checkboxes for each language and only display the language forms if checkbox is set
