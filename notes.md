@@ -7,7 +7,7 @@ languages: needs multi-language support for the textual identification of the la
 categories: needs multi-language support too
 listEntries: join in userName and display it instead of the userId
 salt: rethink and improve salting
-dbconnect: implement/add real error-handling
+testing: write tests!
 
 Optics:
     article-creation: add checkboxes for each language and only display the language forms if checkbox is set
@@ -19,4 +19,5 @@ articles-table: needs heading too (for distinction and selection while creation 
 articles: create/update needs functionality to manage category-assignment
 categories: implement parent-category assignment on creation
 articles: add publish-functionality to create- and edit-forms
+dbconnect: implement/add real error-handling
 
