@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `articles` (
       `articleId` int(11) NOT NULL AUTO_INCREMENT,
       `status` varchar(15) NOT NULL,
+      `heading` varchar(500) NOT NULL,
       `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `userId` int(11) NOT NULL,
       PRIMARY KEY (`articleId`),

@@ -9,6 +9,10 @@
 
         private $con;
 
+        private function lastId() {
+            return $this->con->lastInsertId();
+        }
+
         private function now() {
             return date('Y-m-d H:i:s', time());
         }
@@ -110,7 +114,7 @@
             $insert->bindParam(':comment', $comment);
             if($insert->execute()) {
                 // successful, so return the new comments id
-                return $this->con->lastInsertId();
+                return $this->lastId();
             }
             throw new SQLException($insert->errorInfo()[2]);
         }
@@ -143,7 +147,7 @@
             $insert->bindParam(':date', $createDate);
             $insert->bindParam(':user', $_SESSION['userid']);
             if($insert->execute()){
-                return $this->con->lastInsertId();
+                return $this->lastId();
             }
             throw new SQLException($insert->errorInfo()[2]);
         }
