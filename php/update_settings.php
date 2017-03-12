@@ -13,7 +13,12 @@
             "value" => $setting['value'],
         ];
     }
-    $connection->setSettings($settings);
-    header('Location: admin.php');
+    try {
+        $connection->setSettings($settings);
+        header('Location: admin.php');
+    } catch SQLException $e {
+        echo "Can't update settings:<br />" .$e->getMessage();
+        echo '<a href="admin.php">Back to admin panel</a>';
+    }
 ?>
 

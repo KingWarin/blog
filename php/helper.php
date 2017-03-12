@@ -72,4 +72,14 @@
         session_destroy();
         header('Location: '.$home);
     }
+
+    function checkNonEmpty($candidate) {
+        if(!isset($candidate)) {
+            return false;
+        }
+        if($candidate == '') {
+            return false;
+        }
+        return true;
+    }
 ?>

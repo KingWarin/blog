@@ -12,11 +12,16 @@
                 $parent = NULL;
             }
             $connection = new Connection();
-            $result = $connection->createCategory($name, $parent);
-            header('Location: admin.php');
+            try {
+                $connection->createCategory($name, $parent);
+                header('Location: admin.php');
+            } catch SQLException $e {
+                echo 'Creation failed: ' .$e->getMessage();
+            }
         } else {
             echo "Failure";
         }
+        echo '<a href="admin.php">Return to admin panel</a>';
     }
 ?>
 

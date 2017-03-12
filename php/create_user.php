@@ -19,16 +19,17 @@
             $salt = $_POST['salt'];
             if ($pass == $_POST['passc'] && $salt == $_POST['saltc']) {
                 $connection = new Connection();
-                $result = $connection->addUser($alias, $mail, $pass, $salt);
-                if ($result) {
+                try {
+                    $connection->addUser($alias, $mail, $pass, $salt);
                     header('Location: admin.php');
-                } else {
-                    echo "Failed!";
+                } catch SQLException $e {
+                    echo 'Creation failed: ' .$e->getMessage();
                 }
             }
         } else {
             echo "Failure";
         }
+        echo '<a href="admin.php">Back to admin panel</a>';
     }
 ?>
 

@@ -1,5 +1,6 @@
 <?php
     include_once 'conf.php';
+    include_once 'exceptions.php';
 
     class Connection {
         public function __construct() {
@@ -10,6 +11,18 @@
 
         private function now() {
             return date('Y-m-d H:i:s', time());
+        }
+
+        public function begin() {
+            $this->con->beginTransaction();
+        }
+
+        public function rollback() {
+            $this->con->rollBack();
+        }
+
+        public function commit() {
+            $this->con->commit();
         }
 
         public function getActiveUserByMail($mail) {
@@ -24,7 +37,9 @@
                     status='active'
             ");
             $select->bindParam(':mail', $mail);
-            $select->execute();
+            if(!$select->execute()) {
+                throw new SQLException($select->errorInfo()[2]);
+            }
             $result = $select->fetch(PDO::FETCH_ASSOC);
             return $result;
         }
@@ -38,8 +53,10 @@
             ");
             $insert->bindParam(':category_name', $categoryName);
             $insert->bindParam(':parent_id', $parentId);
-            $res = $insert->execute();
-            return $res;
+            if($insert->execute()) {
+                return true;
+            }
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function addLanguage($lang, $langIcon) {
@@ -55,7 +72,7 @@
             if($insert->execute()) {
                 return true;
             }
-            return false;
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function addUser($alias, $mail, $pass, $salt) {
@@ -72,8 +89,10 @@
             $insert->bindParam(':userMail', $mail);
             $insert->bindParam(':userPass', $userPass);
             $insert->bindParam(':userSalt', $salt);
-            $res = $insert->execute();
-            return $res;
+            if($insert->execute()) {
+                return true;
+            }
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function addComment($commentor, $mail, $page, $comment) {
@@ -93,8 +112,7 @@
                 // successful, so return the new comments id
                 return $this->con->lastInsertId();
             }
-            // failure
-            return false;
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function linkCommentToArticle($articleId, $commentId) {
@@ -108,9 +126,8 @@
             $insert->bindParam(':commentId', $commentId);
             if($insert->execute()) {
                 return true;
-            } else {
-                return false;
             }
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function createArticle($heading, $status) {
@@ -128,7 +145,7 @@
             if($insert->execute()){
                 return $this->con->lastInsertId();
             }
-            return false;
+            throw new SQLException($insert->errorInfo()[2]);
         }
 
         public function createContentForArticle($articleId, $contents) {
@@ -139,7 +156,6 @@
                 VALUES
                     (:aId, :date, :heading, :content, :lId)
             ");
-            $errors = array();
             foreach($contents as $content) {
                 $insert->bindParam(':aId', $articleId);
                 $insert->bindParam(':date', $date);
@@ -147,11 +163,10 @@
                 $insert->bindParam(':content', $content['content']);
                 $insert->bindParam(':lId', $content['languageId']);
                 if(!$insert->execute()) {
-                    $errors[] = "Unable to create content with heading: ".content['contentHeading'];
+                    throw new SQLException($insert->errorInfo()[2]);
                 }
                 $insert->closeCursor();
             }
-            return $errors;
         }
 
         public function getEntry($articleId) {
@@ -188,10 +203,9 @@
                     $article['categories'] = $categories;
                     return $article;
                 }
-                // For now just fallback to returning false...
+                throw new SQLException($selectContent->errorInfo()[2]);
             }
-            // ... in the future return sth. like a status code so we can display what didn't work out
-            return false;
+            throw new SQLException($selectArticle->errorInfo()[2]);
         }
 
         public function getLanguages() {
@@ -205,8 +219,7 @@
                 $langs = $select->fetchAll();
                 return $langs;
             }
-            // Again, add some error handling stuff
-            return false;
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function getRemainingLanguagesForArticle($articleId) {
@@ -231,7 +244,7 @@
                 $langs = $select->fetchAll();
                 return $langs;
             }
-            return false;
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function getArticles() {
@@ -245,7 +258,7 @@
                 $articles = $select->fetchAll();
                 return $articles;
             }
-            return false;
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function getCategories() {
@@ -259,7 +272,7 @@
                 $categories = $select->fetchAll();
                 return $categories;
             }
-            return false;
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function getCategoriesForArticle($articleId) {
@@ -280,7 +293,7 @@
                 $categories = $select->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
                 return $categories;
             }
-            return false;
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function linkCategoriesToArticle($categories, $articleId) {
@@ -291,17 +304,13 @@
                 VALUES
                     (:aId, :cId)
             ");
-            $errors = array();
             foreach($categories as $category) {
                 $insert->bindParam(':aId', $articleId);
                 $insert->bindParam(':cId', $category);
                 if(!$insert->execute()) {
-                    $errors[] = "Unable to create category-link for article with category: ".$articleId.'/'.$category;
+                    throw new SQLException($insert->errorInfo()[2]);
                 }
                 $insert->closeCursor();
-            }
-            if(count($errors) > 0) {
-                return $errors;
             }
             return true;
         }
@@ -320,12 +329,9 @@
                 $delete->bindParam(':aId', $articleId);
                 $delete->bindParam(':cId', $category);
                 if(!$delete->execute()) {
-                    $errors[] = 'Unable to unlink category for article: '.$category.'/'.$articleId;
+                    throw new SQLException($delete->errorInfo()[2]);
                 }
                 $delete->closeCursor();
-            }
-            if(count($errors) > 0) {
-                return $errors;
             }
             return true;
         }
@@ -356,7 +362,7 @@
                     $updateContent->bindParam(':content', $content['content']);
                     $updateContent->bindParam(':contentId', $content['contentId']);
                     if(!$updateContent->execute()) {
-                        $errors[] = "Can't update content with id/heading: ".$content['contentId']."/".$content['contentHeading'];
+                        throw new SQLException($updateContent->errorInfo()[2]);
                     }
                     $updateContent->closeCursor();
                 } else if($content['save'] == 'on') {
@@ -366,12 +372,11 @@
                     $insert->bindParam(':content', $content['content']);
                     $insert->bindParam(':lId', $content['languageId']);
                     if(!$insert->execute()) {
-                        $errors[] = "Unable to create content with heading: ".$content['contentHeading'];
+                        throw new SQLException($insert->errorInfo()[2]);
                     }
                     $insert->closeCursor();
                 }
             }
-            return $errors;
         }
 
         public function getSettings() {
@@ -385,6 +390,7 @@
                 $settings = $select->fetchAll();
                 return $settings;
             }
+            throw new SQLException($select->errorInfo()[2]);
         }
 
         public function setSettings($settings) {
@@ -403,7 +409,9 @@
                 }
                 $update->bindParam(':sId', $settingId);
                 $update->bindParam(':sValue', $setting['value']);
-                $update->execute();
+                if(!$update->execute()) {
+                    throw new SQLException($update->errorInfo()[2]);
+                }
             }
         }
     }

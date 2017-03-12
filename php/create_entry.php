@@ -5,23 +5,21 @@
     if(!check_login()) {
         header('Location: ../login.html');
     } else {
-        if(isset($_POST['articleHeading'], $_POST['lang'])) {
+        if(isset($_POST['articleHeading'], $_POST['lang']) && checkNonEmpty($_POST['articleHeading'])) {
             $status = 'draft';
             if(isset($_POST['publish'])) {
                 $status = 'published';
             }
             $connection = new Connection();
-            $article = $connection->createArticle($_POST['articleHeading'], $status);
-            if(!$article) {
-                //an error occured, do some error handling
-                echo "Unable to create article";
-            } else {
+            try {
+                $connection->begin();
+                $article = $connection->createArticle($_POST['articleHeading'], $status);
                 if(isset($_POST['category'])) {
                     $categories = array();
                     while($category = each($_POST['category'])) {
                         $categories[] = $category['key'];
                     }
-                    $categoryLinks = $connection->linkCategoriesToArticle($categories, $article);
+                    $connection->linkCategoriesToArticle($categories, $article);
                 }
                 $languages = $_POST['lang'];
                 $allContent = array();
@@ -34,19 +32,17 @@
                     $content['articleId'] = $article;
                     $allContent[] = $content;
                 }
-                $content = $connection->createContentForArticle($article, $allContent);
-                if(count($content) > 0) {
-                    echo "Errors occured.<br />";
-                    foreach($content as $error) {
-                        echo $error."<br />";
-                    }
-                } else {
-                    header('Location: admin.php');
-                }
+                $connection->createContentForArticle($article, $allContent);
+                $connection->commit();
+                header('Location: admin.php');
+            } catch (Exception $e) {
+                echo 'Error on creating article: '. $e->getMessage();
+                $connection->rollback();
             }
         } else {
-            echo "Failure";
+            echo "Failure! No heading and/or language set.";
         }
+        echo '<br /><a href="admin.php">Click here to return to admin panel</a>';
     }
 ?>
 

@@ -9,11 +9,16 @@
             $language = $_POST['language'];
             $icon = $_POST['icon'];
             $connection = new Connection();
-            $result = $connection->addLanguage($language, $icon);
-            header('Location: admin.php');
+            try {
+                $connection->addLanguage($language, $icon);
+                header('Location: admin.php');
+            } catch SQLException $e {
+                echo 'Creation failed: ' .$e->getMessage();
+            }
         } else {
             echo "Failure";
         }
+        echo '<a href="admin.php">Return to admin panel</a>';
     }
 ?>
 
