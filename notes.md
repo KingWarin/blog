@@ -8,6 +8,8 @@ categories: needs multi-language support too
 listEntries: join in userName and display it instead of the userId
 salt: rethink and improve salting
 testing: write tests!
+index: limit count of articles shown on one page
+index: show default language for article if selected language is not available
 
 Optics:
     article-creation: add checkboxes for each language and only display the language forms if checkbox is set
