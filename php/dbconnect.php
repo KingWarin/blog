@@ -265,6 +265,92 @@
             throw new SQLException($select->errorInfo()[2]);
         }
 
+        public function getPublishedArticles($offset, $limit, $order) {
+            $stmt = "
+                SELECT
+                    articleId, status, createDate, userId, heading
+                FROM
+                    articles
+                WHERE
+                    status = 'published'
+                ORDER BY
+                    createDate
+            ";
+            if($order) {
+                $stmt = $stmt." DESC ";
+            }
+            $stmt = $stmt."LIMIT :offset,:limit";
+            $select = $this->con->prepare($stmt);
+            $select->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $select->bindParam(':limit', $limit, PDO::PARAM_INT);
+            if($select->execute()) {
+                $articles = $select->fetchAll();
+                return $articles;
+            }
+            throw new SQLException($select->errorInfo()[2]);
+        }
+
+        public function getPublishedArticlesByCategory($categoryId, $offset, $limit, $order) {
+            $stmt = "
+                SELECT
+                    a.articleId, a.createDate, a.userId, a.heading
+                FROM
+                    articles a
+                JOIN
+                    articlecategories ac
+                ON
+                    a.articleId = ac.articleId
+                WHERE
+                    ac.categoryId = :categoryId
+                AND
+                    a.status = 'published'
+            ";
+            if($order) {
+                $stmt = $stmt." DESC ";
+            }
+            $stmt = $stmt."LIMIT :offset,:limit";
+            $select = $this->con->prepare($stmt);
+            $select->bindParam(':categoryId', $categoryId);
+            $select->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $select->bindParam(':limit', $limit, PDO::PARAM_INT);
+            if(!$select->execute()) {
+                throw new SQLException($select->errorInfo()[2]);
+            }
+            $articles = $select->fetchAll();
+            return $articles;
+        }
+
+        public function getPosts($languageId, $offset, $limit, $direction, $category) {
+            if($category) {
+                $articles = $this->getPublishedArticlesByCategory($category, $offset, $limit, $direction);
+            } else {
+                $articles = $this->getPublishedArticles($offset, $limit, $direction);
+            }
+            $selectContent = $this->con->prepare("
+                SELECT
+                    c.contentId, c.heading, c.content
+                FROM
+                    content as c
+                WHERE
+                    c.articleId=:aid
+                AND
+                    c.languageId=:languageId
+            ");
+            foreach($articles as &$article) {
+                $selectContent->bindParam(':aid', $article['articleId']);
+                $selectContent->bindParam(':languageId', $languageId);
+                if(!$selectContent->execute()) {
+                    throw new SQLException($selectContent->errorInfo()[2]);
+                }
+                $content = $selectContent->fetch(PDO::FETCH_ASSOC);
+                if($content) {
+                    $article['content'] = $content;
+                }
+                $selectContent->closeCursor();
+            }
+            return $articles;
+        }
+
         public function getCategories() {
             $select = $this->con->query("
                 SELECT
@@ -340,7 +426,7 @@
             return true;
         }
 
-        public function updateArticle($articleId, $contents) {
+        public function updateArticle($articleId, $contents, $status) {
             $date = $this->now();
             $insert = $this->con->prepare("
                 INSERT INTO
@@ -356,6 +442,14 @@
                     content=:content
                 WHERE
                     contentId=:contentId
+            ");
+            $updateArticle = $this->con->prepare("
+                UPDATE
+                    articles
+                SET
+                    status=:status
+                WHERE
+                    articleId=:aId
             ");
             $errors = array();
             foreach($contents as $content) {
@@ -381,6 +475,12 @@
                     $insert->closeCursor();
                 }
             }
+            $updateArticle->bindParam(':status', $status);
+            $updateArticle->bindParam(':aId', $articleId);
+            if(!$updateArticle->execute()) {
+                throw new SQLException($updateArticle->errorInfo()[2]);
+            }
+            $updateArticle->closeCursor();
         }
 
         public function getSettings() {

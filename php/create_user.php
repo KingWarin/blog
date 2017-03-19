@@ -22,7 +22,7 @@
                 try {
                     $connection->addUser($alias, $mail, $pass, $salt);
                     header('Location: admin.php');
-                } catch SQLException $e {
+                } catch (SQLException $e) {
                     echo 'Creation failed: ' .$e->getMessage();
                 }
             }

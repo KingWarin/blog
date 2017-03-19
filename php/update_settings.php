@@ -16,7 +16,7 @@
     try {
         $connection->setSettings($settings);
         header('Location: admin.php');
-    } catch SQLException $e {
+    } catch (SQLException $e) {
         echo "Can't update settings:<br />" .$e->getMessage();
         echo '<a href="admin.php">Back to admin panel</a>';
     }

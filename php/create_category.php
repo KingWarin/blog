@@ -15,7 +15,7 @@
             try {
                 $connection->createCategory($name, $parent);
                 header('Location: admin.php');
-            } catch SQLException $e {
+            } catch (SQLException $e) {
                 echo 'Creation failed: ' .$e->getMessage();
             }
         } else {

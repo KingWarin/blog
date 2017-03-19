@@ -74,7 +74,7 @@
                     }
                 ?>
                 <label for="publish">Publish:</label>
-                <input type="checkbox" name="publish" />
+                <input type="checkbox" name="publish" <?php echo (isset($entry['status']) && $entry['status'] == 'published' ? 'checked' : '') ?>/>
                 <hr />
                 <input type="submit" value="Update" />
                 <a  href="admin.php">Dismiss changes</a>

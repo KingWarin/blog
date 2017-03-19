@@ -12,7 +12,7 @@
             try {
                 $connection->addLanguage($language, $icon);
                 header('Location: admin.php');
-            } catch SQLException $e {
+            } catch (SQLException $e) {
                 echo 'Creation failed: ' .$e->getMessage();
             }
         } else {

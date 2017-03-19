@@ -33,15 +33,16 @@
                         $categories[] = $category['key'];
                     }
                     $delCategories = array_diff($categoriesOld, $categories);
+                    $categories = array_diff($categories, $categoriesOld);
                     $connection->linkCategoriesToArticle($categories, $articleId);
                 }
                 if(count($delCategories) > 0) {
                     $connection->unlinkCategoriesForArticle($delCategories, $articleId);
                 }
-                $connection->updateArticle($articleId, $allContent);
+                $connection->updateArticle($articleId, $allContent, $status);
                 $connection->commit();
                 header('Location: admin.php');
-            } catch SQLException $e {
+            } catch (SQLException $e) {
                 echo "Can't update entry:<br />" .$e->getMessage();
                 echo '<a href="admin.php">Back to admin panel</a>';
                 $connection->rollback();
