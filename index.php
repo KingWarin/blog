@@ -1,5 +1,6 @@
 <?php
     include_once "php/helper.php";
+    secure_session();
     $con = new Connection();
     $settings = $con->getSettings();
     $langs = $con->getLanguages();
@@ -67,7 +68,37 @@
             foreach($posts as $post) {
                 if(isset($post['content'])) {
                     $content = $post['content'];
-                    echo '<article>'.$content['heading'].' '.$content['content'].'</article>';
+                    $commentCount = count($post['comments']);
+                    echo '<article style="border:1px solid;">'.$content['createDate'].' '.$content['heading'].' '.$content['content'];
+                    echo '<div style="border:1px solid #00FF00;">';
+                    if($commentCount < 1) {
+                        echo 'Leave a comment';
+                    } else {
+                        echo count($post['comments']).' Comments';
+                        echo '<div class="comments">';
+                        foreach($post['comments'] as $comment) {
+                            echo '<div class="comment">'.$comment['createDate'].' '.$comment['commentorName'].' '.$comment['comment'].'</div>';
+                        }
+                        echo '</div>';
+                    }
+                    echo '<div class="leave-a-comment">';
+                    echo '<form action="php/create_comment.php" method="post">';
+                    echo '<label for="name">Name:</label>';
+                    echo '<input type="text" name="name" />';
+                    echo '<label for="mail">Mail:</label>';
+                    echo '<input type="text" name="mail" />';
+                    echo '<label for="website">Homepage:</label>';
+                    echo '<input type="text" name="website" />';
+                    echo '<label for="comment">Comment</label>';
+                    echo '<input type="textarea" name="comment"></textarea>';
+                    echo '<label for="captcha">Captcha:</label>';
+                    echo '<img src="/php/captcha.php?mode=comment" width="145" height="30" />';
+                    echo '<input type="text" name="captcha" />';
+                    echo '<input type="hidden" name="articleId" value="'.$post['articleId'].'" />';
+                    echo '<input type="submit">';
+                    echo '</form>';
+                    echo '</div>';
+                    echo '</div></article>';
                 }
             }
         ?>

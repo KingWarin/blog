@@ -320,6 +320,27 @@
             return $articles;
         }
 
+        public function getCommentsForArticle($articleId) {
+            $selectComments = $this->con->prepare("
+                SELECT
+                    c.createDate, c.commentorName, c.commentorPage, c.comment
+                FROM
+                    comments c
+                JOIN
+                    articlecomments ac
+                ON
+                    c.commentId = ac.commentId
+                WHERE
+                    ac.articleId = :articleId
+            ");
+            $selectComments->bindParam(':articleId', $articleId);
+            if(!$selectComments->execute()) {
+                throw new SQLException($selectComments->errorInfo()[2]);
+            }
+            $comments = $selectComments->fetchAll();
+            return $comments;
+        }
+
         public function getPosts($languageId, $offset, $limit, $direction, $category) {
             if($category) {
                 $articles = $this->getPublishedArticlesByCategory($category, $offset, $limit, $direction);
@@ -328,7 +349,7 @@
             }
             $selectContent = $this->con->prepare("
                 SELECT
-                    c.contentId, c.heading, c.content
+                    c.contentId, c.heading, c.content, c.createDate
                 FROM
                     content as c
                 WHERE
@@ -347,6 +368,8 @@
                     $article['content'] = $content;
                 }
                 $selectContent->closeCursor();
+                $comments = $this->getCommentsForArticle($article['articleId']);
+                $article['comments'] = $comments;
             }
             return $articles;
         }
