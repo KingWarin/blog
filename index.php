@@ -33,24 +33,7 @@
 <html>
     <head>
         <title><?php echo $title ?></title>
-        <style>
-            .comment-section {
-                border: 1px solid #00FF00;
-            }
-            .comment-section .comment-toggle {
-                text-decoration: underline;
-                color: blue;
-            }
-            .comment-section-body {
-                display: none;
-            }
-            .comment-section-heading {
-                display: none;
-            }
-            .comment-section-heading:checked + div.comment-section-body {
-                display: block;
-            }
-        </style>
+        <link rel="stylesheet" href="css/home.css">
     </head>
     <body>
         <header>
@@ -90,11 +73,11 @@
                     echo '<article style="border:1px solid;">'.$content['createDate'].' '.$content['heading'].' '.$content['content'];
                     echo '<div class="comment-section">';
                     if($commentCount < 1) {
-                        echo '<label class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">Leave a comment</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="comment-section-heading" />';
-                        echo '<div class="comment-section-body">';
+                        echo '<label tabindex="0" class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">Leave a comment</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="heading" />';
+                        echo '<div class="body">';
                     } else {
-                        echo '<label class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">'.count($post['comments']).' Comments</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="comment-section-heading" />';
-                        echo '<div class="comment-section-body">';
+                        echo '<label tabindex="0" class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">'.count($post['comments']).' Comments</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="heading" />';
+                        echo '<div class="body">';
                         foreach($post['comments'] as $comment) {
                             echo '<div class="comment">'.$comment['createDate'].' '.$comment['commentorName'].' '.$comment['comment'].'</div>';
                         }

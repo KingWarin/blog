@@ -1,0 +1,13 @@
+.comment-section {
+  border: 1px solid #00FF00; }
+  .comment-section .comment-toggle {
+    text-decoration: underline;
+    color: blue; }
+  .comment-section .body {
+    display: none; }
+  .comment-section .heading {
+    display: none; }
+  .comment-section .heading:checked + div.body {
+    display: block; }
+
+/*# sourceMappingURL=home.css.map */
