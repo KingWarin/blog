@@ -33,6 +33,24 @@
 <html>
     <head>
         <title><?php echo $title ?></title>
+        <style>
+            .comment-section {
+                border: 1px solid #00FF00;
+            }
+            .comment-section .comment-toggle {
+                text-decoration: underline;
+                color: blue;
+            }
+            .comment-section-body {
+                display: none;
+            }
+            .comment-section-heading {
+                display: none;
+            }
+            .comment-section-heading:checked + div.comment-section-body {
+                display: block;
+            }
+        </style>
     </head>
     <body>
         <header>
@@ -70,16 +88,16 @@
                     $content = $post['content'];
                     $commentCount = count($post['comments']);
                     echo '<article style="border:1px solid;">'.$content['createDate'].' '.$content['heading'].' '.$content['content'];
-                    echo '<div style="border:1px solid #00FF00;">';
+                    echo '<div class="comment-section">';
                     if($commentCount < 1) {
-                        echo 'Leave a comment';
+                        echo '<label class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">Leave a comment</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="comment-section-heading" />';
+                        echo '<div class="comment-section-body">';
                     } else {
-                        echo count($post['comments']).' Comments';
-                        echo '<div class="comments">';
+                        echo '<label class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">'.count($post['comments']).' Comments</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="comment-section-heading" />';
+                        echo '<div class="comment-section-body">';
                         foreach($post['comments'] as $comment) {
                             echo '<div class="comment">'.$comment['createDate'].' '.$comment['commentorName'].' '.$comment['comment'].'</div>';
                         }
-                        echo '</div>';
                     }
                     echo '<div class="leave-a-comment">';
                     echo '<form action="php/create_comment.php" method="post">';
@@ -97,6 +115,7 @@
                     echo '<input type="hidden" name="articleId" value="'.$post['articleId'].'" />';
                     echo '<input type="submit">';
                     echo '</form>';
+                    echo '</div>';
                     echo '</div>';
                     echo '</div></article>';
                 }
