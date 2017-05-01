@@ -37,8 +37,10 @@
     </head>
     <body>
         <header>
-            <h1><?php echo $title ?></h1>
-            <h2><?php echo $subtitle ?></h2>
+            <div>
+                <h1><?php echo $title ?></h1>
+                <h2><?php echo $subtitle ?></h2>
+            </div>
             <nav>
                 <ul>
                 <?php
@@ -70,7 +72,9 @@
                 if(isset($post['content'])) {
                     $content = $post['content'];
                     $commentCount = count($post['comments']);
-                    echo '<article style="border:1px solid;">'.$content['createDate'].' '.$content['heading'].' '.$content['content'];
+                    echo '<article>';
+                    echo '<div class="title"><div>'.$content['heading'].'</div><div>'.$content['createDate'].'</div></div>';
+                    echo '<div class="body"> '.$content['content'].'</div>';
                     echo '<div class="comment-section">';
                     if($commentCount < 1) {
                         echo '<label tabindex="0" class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">Leave a comment</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="heading" />';

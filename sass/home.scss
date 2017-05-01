@@ -1,6 +1,4 @@
 .comment-section {
-    border: 1px solid #00FF00;
-
     .comment-toggle {
         text-decoration: underline;
         color: blue;
@@ -18,3 +16,44 @@
         display: block;
     }
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+
+    ul {
+        display: flex;
+        justify-content: space-between;
+
+        li {
+            display: block;
+            padding: 0 5px;
+        }
+    }
+}
+
+aside {
+    nav {
+        li {
+            display: block;
+        }
+    }
+}
+
+main {
+    article {
+        border: 1px solid;
+        margin: 5px;
+        padding: 5px;
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .body {
+            padding: 5px;
+        }
+    }
+}
+
