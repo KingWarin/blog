@@ -1,3 +1,24 @@
+body {
+  display: grid;
+  grid-template-rows: min-content 50px min-content 1fr; }
+  body header {
+    display: grid;
+    grid-template-rows: 20px min-content;
+    grid-template-columns: repeat(3, 1fr); }
+    body header .title {
+      grid-column: 1/-1; }
+    body header h1,
+    body header h2 {
+      margin: 0; }
+    body header nav {
+      grid-column: -3 / -1;
+      grid-row: 1;
+      display: flex;
+      justify-content: flex-end;
+      order: 0; }
+      body header nav a {
+        margin: 0 5px; }
+
 .comment-section .comment-toggle {
   text-decoration: underline;
   color: blue; }
@@ -8,27 +29,32 @@
 .comment-section .heading:checked + div.body {
   display: block; }
 
-header {
+.header {
   display: flex;
   justify-content: space-between; }
-  header ul {
+  .header ul {
     display: flex;
     justify-content: space-between; }
-    header ul li {
+    .header ul li {
       display: block;
       padding: 0 5px; }
 
-aside nav li {
-  display: block; }
+aside nav {
+  display: flex;
+  justify-content: flex-start;
+  align-content: center; }
 
 main article {
+  display: grid;
+  grid-template-rows: repeat(3, min-content);
+  grid-template-columns: 2fr 1fr;
   border: 1px solid;
   margin: 5px;
   padding: 5px; }
-  main article .title {
+  main article .date {
     display: flex;
-    justify-content: space-between; }
+    justify-content: flex-end; }
   main article .body {
-    padding: 5px; }
+    grid-column: 1 / -1; }
 
 /*# sourceMappingURL=home.css.map */

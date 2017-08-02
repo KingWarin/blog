@@ -37,33 +37,29 @@
     </head>
     <body>
         <header>
-            <div>
+            <div class='title'>
                 <h1><?php echo $title ?></h1>
                 <h2><?php echo $subtitle ?></h2>
             </div>
             <nav>
-                <ul>
                 <?php
                     foreach($langs as $lang) {
-                        echo '<li><a href="?lang='.$lang['languageId'].'">'.$lang['language'].'</a></li>';
+                        echo '<a href="?lang='.$lang['languageId'].'">'.$lang['language'].'</a>';
                     }
                 ?>
-                </ul>
             </nav>
         </header>
         <aside>
             <nav>
-                <ul>
                 <?php
                     foreach($categories as $category) {
                         $link = '?cat='.$category['categoryId'];
                         if($selectedLanguage != $defaultLanguage) {
                             $link = $link.'&lang='.$selectedLanguage;
                         }
-                        echo '<li><a href="'.$link.'">'.$category['categoryName'].'</a></li>';
+                        echo '<a href="'.$link.'">'.$category['categoryName'].'</a>';
                     }
                 ?>
-                </ul>
             </nav>
         </aside>
         <main>
@@ -73,7 +69,7 @@
                     $content = $post['content'];
                     $commentCount = count($post['comments']);
                     echo '<article>';
-                    echo '<div class="title"><div>'.$content['heading'].'</div><div>'.$content['createDate'].'</div></div>';
+                    echo '<div>'.$content['heading'].'</div><div class="date">'.$content['createDate'].'</div>';
                     echo '<div class="body"> '.$content['content'].'</div>';
                     echo '<div class="comment-section">';
                     if($commentCount < 1) {
