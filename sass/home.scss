@@ -49,26 +49,15 @@ body {
     }
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-
-    ul {
-        display: flex;
-        justify-content: space-between;
-
-        li {
-            display: block;
-            padding: 0 5px;
-        }
-    }
-}
-
 aside {
     nav {
         display: flex;
         justify-content: flex-start;
         align-content: center;
+
+        a {
+            margin: 0 5px;
+        }
     }
 }
 
@@ -90,14 +79,6 @@ main {
         .body {
             grid-column: 1 / -1;
         }
-//        .title {
-//            display: flex;
-//            justify-content: space-between;
-//        }
-//
-//        .body {
-//            padding: 5px;
-//        }
     }
 }
 
