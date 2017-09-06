@@ -93,7 +93,7 @@
                     echo '<label for="comment">Comment</label>';
                     echo '<input type="textarea" name="comment"></textarea>';
                     echo '<label for="captcha">Captcha:</label>';
-                    echo '<img src="/php/captcha.php?mode=comment" width="145" height="30" />';
+                    echo '<img src="php/captcha.php?mode=comment" width="145" height="30" />';
                     echo '<input type="text" name="captcha" />';
                     echo '<input type="hidden" name="articleId" value="'.$post['articleId'].'" />';
                     echo '<input type="submit">';
