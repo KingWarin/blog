@@ -1,13 +1,17 @@
 <?php
     include_once 'conf.php';
     include_once 'exceptions.php';
+    include_once 'Parsedown.php';
 
     class Connection {
         public function __construct() {
             $this->con = new PDO('mysql:host='.HOST.';dbname='.DB, USER, PASS);
+            $this->markdownParser = new Parsedown();
         }
 
         private $con;
+
+        private $markdownParser;
 
         private function lastId() {
             return $this->con->lastInsertId();
@@ -15,6 +19,10 @@
 
         private function now() {
             return date('Y-m-d H:i:s', time());
+        }
+
+        public function parseMarkdown($markdown) {
+            return $this->markdownParser->text($markdown);
         }
 
         public function begin() {
@@ -183,7 +191,7 @@
                     articleId=:aid
             ");
             $selectContent = $this->con->prepare(
-                "SELECT 
+                "SELECT
                     c.contentId, c.heading, c.content, l.languageId, l.language, l.icon
                  FROM
                     content as c
