@@ -29,20 +29,12 @@ body {
 .comment-section .heading:checked + div.body {
   display: block; }
 
-.header {
-  display: flex;
-  justify-content: space-between; }
-  .header ul {
-    display: flex;
-    justify-content: space-between; }
-    .header ul li {
-      display: block;
-      padding: 0 5px; }
-
 aside nav {
   display: flex;
   justify-content: flex-start;
   align-content: center; }
+  aside nav a {
+    margin: 0 5px; }
 
 main article {
   display: grid;
