@@ -70,7 +70,7 @@
                     $commentCount = count($post['comments']);
                     echo '<article>';
                     echo '<div>'.$content['heading'].'</div><div class="date">'.$content['createDate'].'</div>';
-                    echo '<div class="body"> '.$content['content'].'</div>';
+                    echo '<div class="body"> '.$con->parseMarkdown($content['content']).'</div>';
                     echo '<div class="comment-section">';
                     if($commentCount < 1) {
                         echo '<label tabindex="0" class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">Leave a comment</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="heading" />';
@@ -79,7 +79,7 @@
                         echo '<label tabindex="0" class="comment-toggle" for="comment-toggle-'.$post['articleId'].'">'.count($post['comments']).' Comments</label><input type="checkbox" id="comment-toggle-'.$post['articleId'].'" class="heading" />';
                         echo '<div class="body">';
                         foreach($post['comments'] as $comment) {
-                            echo '<div class="comment">'.$comment['createDate'].' '.$comment['commentorName'].' '.$comment['comment'].'</div>';
+                            echo '<div class="comment">'.$comment['createDate'].' '.$comment['commentorName'].' '.$con->parseMarkdown($comment['comment']).'</div>';
                         }
                     }
                     echo '<div class="leave-a-comment">';
