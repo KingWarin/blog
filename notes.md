@@ -10,6 +10,8 @@ salt: rethink and improve salting
 testing: write tests!
 index: limit count of articles shown on one page
 index: show default language for article if selected language is not available
+editEntries: add possibility to unpublish single language of post
+deleteEntries: add functionality to delete posts
 
 Optics:
     article-creation: add checkboxes for each language and only display the language forms if checkbox is set
