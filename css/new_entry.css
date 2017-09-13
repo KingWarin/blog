@@ -6,6 +6,16 @@
 .content-row {
   display: grid; }
 
+.content-row .language-toggle {
+  text-decoration: underline;
+  color: blue; }
+.content-row .body {
+  display: none; }
+.content-row .language {
+  display: none; }
+.content-row .language:checked + div.body {
+  display: grid; }
+
 /*
 aside {
     nav {

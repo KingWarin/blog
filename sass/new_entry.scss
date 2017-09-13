@@ -8,6 +8,24 @@
     display: grid;
 }
 
+.content-row {
+    .language-toggle {
+        text-decoration: underline;
+        color: blue;
+    }
+
+    .body {
+        display: none;
+    }
+
+    .language {
+        display: none;
+    }
+
+    .language:checked + div.body {
+        display: grid;
+    }
+}
 /*
 aside {
     nav {

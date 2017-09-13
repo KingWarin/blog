@@ -28,14 +28,16 @@
                 foreach($langs as $lang) {
             ?>
                 <div class="content-row">
-                    <label for="contentHeading">Language dependent heading:</label>
-                    <input type="text" name="<?php echo "lang[".$lang['languageId']."][contentHeading]" ?>" />
-                    <label for="language">Language:</label>
-                    <input type="text" name="<?php echo "lang[".$lang['languageId']."][language]" ?>" value="<?php echo $lang['language'] ?>" disabled />
-                    <label for="content">Content:</label>
-                    <textarea name="<?php echo "lang[".$lang['languageId']."][content]" ?>"></textarea>
-                    <label for="save">Save language content</label>
-                    <input type="checkbox" name="<?php echo "lang[".$lang['languageId']."][save]" ?>" />
+                    <label class="language-toggle" tabindex="0" for="<?php echo "lang[".$lang['languageId']."][save]" ?>">Create and save <?php echo $lang['language'] ?></label>
+                    <input type="checkbox" class="language" id="<?php echo "lang[".$lang['languageId']."][save]" ?>" name="<?php echo "lang[".$lang['languageId']."][save]" ?>" />
+                    <div class="body">
+                        <label for="<?php echo "lang[".$lang['languageId']."][contentHeading]" ?>">Language dependent heading:</label>
+                        <input type="text" name="<?php echo "lang[".$lang['languageId']."][contentHeading]" ?>" />
+                        <label for="<?php echo "lang[".$lang['languageId']."][language]" ?>">Language:</label>
+                        <input type="text" name="<?php echo "lang[".$lang['languageId']."][language]" ?>" value="<?php echo $lang['language'] ?>" disabled />
+                        <label for="<?php echo "lang[".$lang['languageId']."][content]" ?>">Content:</label>
+                        <textarea name="<?php echo "lang[".$lang['languageId']."][content]" ?>"></textarea>
+                    </div>
                 </div>
                 <hr />
             <?php

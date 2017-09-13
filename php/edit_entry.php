@@ -18,43 +18,51 @@
 <html>
     <head>
         <title>Edit Blog Entry</title>
+        <link rel="stylesheet" href="../css/new_entry.css">
     </head>
     <body>
         <div>
             <h1>Modify an existing blog entry</h1>
         </div>
-        <div>
-            <form action="update_entry.php" method="post">
+        <form action="update_entry.php" method="post">
+            <div class="heading-row">
                 <label for="articleHeading">Heading:</label>
                 <input type="text" name="articleHeading" value="<?php echo $entry['heading'] ?>" disabled/>
                 <input type="hidden" name="articleId" value="<?php echo $articleId ?>" />
-                <hr />
+            </div>
+            <hr />
                 <?php
                     foreach($entry['content'] as $content) {
                 ?>
-                    <label for="contentHeading">Language dependent heading:</label>
-                    <input type="text" name="<?php echo "lang[".$content['languageId']."][contentHeading]" ?>" value="<?php echo $content['heading'] ?>" />
-                    <label for="language">Language:</label>
-                    <input type="text" name="<?php echo "lang[".$content['languageId']."][language]" ?>" value="<?php echo $content['language'] ?>" disabled />
-                    <label for="content">Content:</label>
-                    <textarea name="<?php echo "lang[".$content['languageId']."][content]" ?>"><?php echo $content['content'] ?></textarea>
-                    <input type="hidden" name="<?php echo "lang[".$content['languageId']."][save]" ?>" value="update" />
-                    <input type="hidden" name="<?php echo "lang[".$content['languageId']."][contentId]" ?>" value="<?php echo $content['contentId'] ?>" />
+                    <div class="content-row">
+                        <label for="contentHeading">Language dependent heading:</label>
+                        <input type="text" name="<?php echo "lang[".$content['languageId']."][contentHeading]" ?>" value="<?php echo $content['heading'] ?>" />
+                        <label for="language">Language:</label>
+                        <input type="text" name="<?php echo "lang[".$content['languageId']."][language]" ?>" value="<?php echo $content['language'] ?>" disabled />
+                        <label for="content">Content:</label>
+                        <textarea name="<?php echo "lang[".$content['languageId']."][content]" ?>"><?php echo $content['content'] ?></textarea>
+                        <input type="hidden" name="<?php echo "lang[".$content['languageId']."][save]" ?>" value="update" />
+                        <input type="hidden" name="<?php echo "lang[".$content['languageId']."][contentId]" ?>" value="<?php echo $content['contentId'] ?>" />
+                    </div>
                     <hr />
                 <?php
                     }
                     if($languages && count($languages) > 0) {
                         foreach($languages as $language) {
                 ?>
+                    <div class="content-row">
+                        <label tabindex="0" class="language-toggle" for="<?php echo "lang[".$language['languageId']."][save]" ?>">Create and save <?php echo $language['language'] ?></label>
+                        <input type="checkbox" class="language" id="<?php echo "lang[".$language['languageId']."][save]" ?>" name="<?php echo "lang[".$language['languageId']."][save]" ?>" />
+                        <div class="body">
                             <label for="contentHeading">Language dependent heading:</label>
                             <input type="text" name="<?php echo "lang[".$language['languageId']."][contentHeading]" ?>" />
                             <label for="language">Language:</label>
                             <input type="text" name="<?php echo "lang[".$language['languageId']."][language]" ?>" value="<?php echo $language['language'] ?>" disabled />
                             <label for="content">Content:</label>
                             <textarea name="<?php echo "lang[".$language['languageId']."][content]" ?>"></textarea>
-                            <label for="save">Save language content</label>
-                            <input type="checkbox" name="<?php echo "lang[".$language['languageId']."][save]" ?>" />
-                            <hr />
+                        </div>
+                    </div>
+                    <hr />
                 <?php
                         }
                     }
