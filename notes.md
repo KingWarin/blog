@@ -13,9 +13,6 @@ index: show default language for article if selected language is not available
 editEntries: add possibility to unpublish single language of post
 deleteEntries: add functionality to delete posts
 
-Optics:
-    article-creation: add checkboxes for each language and only display the language forms if checkbox is set
-
 
 ####Done:
 users-table: needs status (like active/inactive)
@@ -24,4 +21,5 @@ articles: create/update needs functionality to manage category-assignment
 categories: implement parent-category assignment on creation
 articles: add publish-functionality to create- and edit-forms
 dbconnect: implement/add real error-handling
+article-creation: add checkboxes for each language and only display the language forms if checkbox is set
 
