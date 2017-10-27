@@ -1,5 +1,3 @@
-USE blog;
-
 CREATE TABLE IF NOT EXISTS `comments` (
       `commentId` int(11) NOT NULL AUTO_INCREMENT,
       `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

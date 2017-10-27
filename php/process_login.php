@@ -8,7 +8,6 @@
 
         if(login($mail, $pass) ) {
             //valid, login
-            echo "valid";
             header('Location: admin.php');
         } else {
             //invalid, go home
