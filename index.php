@@ -26,7 +26,7 @@
     }
     $offset = 0;
     $limit = 10;
-    $direction = false;
+    $direction = true;
     $posts = $con->getPosts($selectedLanguage, $offset, $limit, $direction, $cat);
     $categories = $con->getCategories();
 ?>
