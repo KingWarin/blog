@@ -312,6 +312,8 @@
                     ac.categoryId = :categoryId
                 AND
                     a.status = 'published'
+                ORDER BY
+                    a.createDate
             ";
             if($order) {
                 $stmt = $stmt." DESC ";
